@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kalkulator Pajak MBLB Bapenda Kota Padang</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        body { font-family: 'Inter', sans-serif; }
+    </style>
+</head>
+<body class="bg-slate-100 text-slate-800 min-h-screen flex flex-col justify-between">
+
+    <!-- Header / Navbar -->
+    <header class="bg-orange-600 text-white shadow-md">
+        <div class="max-w-5xl mx-auto px-4 py-4 flex flex-col sm:flex-row justify-between items-center">
+            <div class="flex items-center space-x-3">
+                <div class="bg-orange-500 p-2.5 rounded-lg text-white">
+                    <i class="fa-solid fa-calculator text-xl"></i>
+                </div>
+                <div>
+                    <h1 class="text-lg font-bold tracking-tight">Kalkulator Pajak MBLB Bapenda Kota Padang</h1>
+                    <p class="text-xs text-orange-100">Perhitungan Pajak Mineral Bukan Logam dan Batuan & Opsen</p>
+                </div>
+            </div>
+            <div class="mt-3 sm:mt-0 text-xs bg-orange-700 px-3 py-1.5 rounded-full text-orange-100 border border-orange-500 flex items-center space-x-2">
+                <span><i class="fa-solid fa-percent mr-1"></i> Tarif Pajak: 20%</span>
+                <span>•</span>
+                <span><i class="fa-solid fa-coins mr-1"></i> Opsen: 25%</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="max-w-5xl mx-auto px-4 py-8 w-full flex-grow">
+        
+        <!-- Form Input Wajib Pajak & Penentuan Satuan -->
+        <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6 mb-8">
+            <div class="flex items-center space-x-2 mb-5 pb-3 border-b border-slate-100">
+                <i class="fa-solid fa-sliders text-orange-600"></i>
+                <h2 class="font-semibold text-slate-800 text-base">Identitas & Konfigurasi Satuan Pengukuran</h2>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <!-- Nama WP -->
+                <div>
+                    <label class="block text-xs font-semibold text-slate-600 uppercase tracking-wider mb-2">
+                        1. Nama Wajib Pajak / Perusahaan
+                    </label>
+                    <input type="text" id="namaWp" placeholder="Contoh: PT. Sumber Padang Mining" oninput="hitungPajak()" class="w-full bg-slate-50 border border-slate-300 rounded-lg px-4 py-2.5 text-sm font-medium text-slate-800 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:bg-white transition">
+                </div>
+
+                <!-- Masa Pajak -->
+                <div>
+                    <label class="block text-xs font-semibold text-slate-600 uppercase tracking-wider mb-2">
+                        2. Masa Pajak
+                    </label>
+                    <div class="grid grid-cols-2 gap-2">
+                        <select id="masaBulan" onchange="hitungPajak()" class="w-full bg-slate-50 border border-slate-300 rounded-lg px-3 py-2.5 text-xs font-medium text-slate-800 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:bg-white transition">
+                            <option value="Januari">Januari</option>
+                            <option value="Februari">Februari</option>
+                            <option value="Maret">Maret</option>
+                            <option value="April">April</option>
+                            <option value="Mei">Mei</option>
+                            <option value="Juni">Juni</option>
+                            <option value="Juli">Juli</option>
+                            <option value="Agustus">Agustus</option>
+                            <option value="September">September</option>
+                            <option value="Oktober">Oktober</option>
+                            <option value="November">November</option>
+                            <option value="Desember">Desember</option>
+                        </select>
+                        <input type="number" id="masaTahun" value="2026" oninput="hitungPajak()" class="w-full bg-slate-50 border border-slate-300 rounded-lg px-3 py-2.5 text-xs font-medium text-slate-800 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:bg-white transition">
+                    </div>
+                </div>
+
+                <!-- Pilihan Satuan Global Utama -->
+                <div class="bg-orange-50/70 border border-orange-200 rounded-xl p-3">
+                    <label class="block text-xs font-bold text-orange-900 uppercase tracking-wider mb-2">
+                        3. Pilih Satuan Pengukuran Utama
+                    </label>
+                    <div class="grid grid-cols-2 gap-2">
+                        <label class="cursor-pointer">
+                            <input type="radio" name="satuanGlobal" value="Ton" checked onchange="updateSatuanGlobal()" class="peer sr-only">
+                            <div class="p-2 text-center rounded-lg border border-slate-300 bg-white text-slate-700 peer-checked:bg-orange-600 peer-checked:text-white peer-checked:border-orange-600 transition text-xs font-bold shadow-sm">
+                                <i class="fa-solid fa-weight-hanging mr-1"></i> Berat (Ton)
+                            </div>
+                        </label>
+                        <label class="cursor-pointer">
+                            <input type="radio" name="satuanGlobal" value="Kubik" onchange="updateSatuanGlobal()" class="peer sr-only">
+                            <div class="p-2 text-center rounded-lg border border-slate-300 bg-white text-slate-700 peer-checked:bg-orange-600 peer-checked:text-white peer-checked:border-orange-600 transition text-xs font-bold shadow-sm">
+                                <i class="fa-solid fa-cube mr-1"></i> Volume (m³)
+                            </div>
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Material Input Card -->
+        <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6 mb-8">
+            <div class="flex justify-between items-center mb-5 pb-3 border-b border-slate-100">
+                <div class="flex items-center space-x-2">
+                    <i class="fa-solid fa-mountain text-orange-600"></i>
+                    <h2 class="font-semibold text-slate-800 text-base">Input Volume / Berat Pemanfaatan Material</h2>
+                </div>
+                <div id="satuanBadge" class="text-xs bg-orange-100 text-orange-800 px-3 py-1 rounded-full font-bold border border-orange-300">
+                    Mode Input: Berat (Ton)
+                </div>
+            </div>
+
+            <div class="overflow-x-auto">
+                <table class="w-full text-left border-collapse min-w-[700px]">
+                    <thead>
+                        <tr class="bg-orange-600 text-white text-xs uppercase tracking-wider">
+                            <th class="py-3 px-4 text-center rounded-l-lg">No</th>
+                            <th class="py-3 px-4">Nama Material MBLB</th>
+                            <th class="py-3 px-4 text-center" id="thSatuanLabel">Input Volume (m³)</th>
+                            <th class="py-3 px-4 text-center">Hasil Konversi (Ton)</th>
+                            <th class="py-3 px-4 text-right rounded-r-lg">Harga Patokan / Ton</th>
+                        </tr>
+                    </thead>
+                    <tbody id="materialTableBody" class="text-sm divide-y divide-slate-100">
+                        <!-- Populated dynamically -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Summary & Calculation Result Card -->
+        <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6 sm:p-8 mb-6">
+            <div class="text-center pb-6 mb-6 border-b border-slate-200">
+                <h2 class="text-xl font-bold text-orange-900 uppercase tracking-wide">LEMBAR HASIL PERHITUNGAN PAJAK MBLB & OPSEN<br><span class="text-lg font-semibold text-orange-700">BAPENDA KOTA PADANG</span></h2>
+                <p class="text-xs text-slate-500 mt-1">Sesuai Perhitungan Dasar Pengenaan Pajak (DPP) & Konversi Standar</p>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6 bg-slate-50 p-4 rounded-lg border border-slate-200 text-sm">
+                <div>
+                    <span class="text-slate-500 block text-xs">Wajib Pajak:</span>
+                    <span id="resNamaWp" class="font-bold text-slate-800 text-base">-</span>
+                </div>
+                <div>
+                    <span class="text-slate-500 block text-xs">Masa Pajak:</span>
+                    <span id="resMasaPajak" class="font-semibold text-orange-800">-</span>
+                </div>
+                <div>
+                    <span class="text-slate-500 block text-xs">Total Berat MBLB Terhitung:</span>
+                    <span id="resTotalBerat" class="font-bold text-slate-800">0.00 Ton</span>
+                </div>
+                <div>
+                    <span class="text-slate-500 block text-xs">Dasar Pengenaan Pajak (DPP):</span>
+                    <span id="resTotalDpp" class="font-bold text-orange-800">Rp 0</span>
+                </div>
+            </div>
+
+            <!-- Calculation Rincian -->
+            <div class="space-y-3 mb-8">
+                <div class="flex justify-between items-center p-3.5 bg-slate-50 rounded-lg border border-slate-200 text-sm">
+                    <div>
+                        <span class="font-bold text-slate-800 block">1. Pokok Pajak MBLB</span>
+                        <span class="text-xs text-slate-500">Tarif Pajak (20%) × Jumlah DPP</span>
+                    </div>
+                    <span id="resPokokPajak" class="font-bold text-slate-900 text-base">Rp 0</span>
+                </div>
+                <div class="flex justify-between items-center p-3.5 bg-slate-50 rounded-lg border border-slate-200 text-sm">
+                    <div>
+                        <span class="font-bold text-slate-800 block">2. Opsen Pajak MBLB</span>
+                        <span class="text-xs text-slate-500">Tarif Opsen (25%) × Pokok Pajak MBLB</span>
+                    </div>
+                    <span id="resOpsenPajak" class="font-bold text-slate-900 text-base">Rp 0</span>
+                </div>
+                <div class="flex justify-between items-center p-3.5 bg-orange-50/60 rounded-lg border border-orange-200 text-sm">
+                    <div>
+                        <div class="flex items-center space-x-2">
+                            <span class="font-bold text-orange-900 block">3. Bunga Keterlambatan Pajak MBLB</span>
+                            <span id="badgeBungaPajak" class="text-[10px] bg-gray-200 text-gray-700 font-bold px-2 py-0.5 rounded-full">0% (Tepat Waktu)</span>
+                        </div>
+                        <span class="text-xs text-slate-500">1% per bulan keterlambatan × Pokok Pajak MBLB</span>
+                    </div>
+                    <span id="resBungaPajak" class="font-bold text-orange-900 text-base">Rp 0</span>
+                </div>
+                <div class="flex justify-between items-center p-3.5 bg-orange-50/60 rounded-lg border border-orange-200 text-sm">
+                    <div>
+                        <div class="flex items-center space-x-2">
+                            <span class="font-bold text-orange-900 block">4. Bunga Keterlambatan Opsen Pajak</span>
+                            <span id="badgeBungaOpsen" class="text-[10px] bg-gray-200 text-gray-700 font-bold px-2 py-0.5 rounded-full">0% (Tepat Waktu)</span>
+                        </div>
+                        <span class="text-xs text-slate-500">1% per bulan keterlambatan × Opsen Pajak MBLB</span>
+                    </div>
+                    <span id="resBungaOpsen" class="font-bold text-orange-900 text-base">Rp 0</span>
+                </div>
+            </div>
+
+            <!-- Total Terutang Highlight -->
+            <div class="bg-gradient-to-r from-orange-600 to-orange-700 text-white rounded-xl p-6 flex flex-col sm:flex-row justify-between items-center shadow-md">
+                <div class="mb-3 sm:mb-0 text-center sm:text-left">
+                    <span class="text-xs uppercase tracking-wider text-orange-100 font-semibold block">Total Pajak MBLB & Opsen Terutang</span>
+                    <span class="text-xs text-orange-200">(Pokok Pajak + Opsen + Bunga Pajak + Bunga Opsen)</span>
+                </div>
+                <div id="grandTotal" class="text-2xl sm:text-3xl font-extrabold text-yellow-300">
+                    Rp 0
+                </div>
+            </div>
+        </div>
+
+        <!-- Action Button -->
+        <div class="flex justify-end">
+            <button onclick="resetKalkulator()" class="bg-white hover:bg-slate-50 text-red-600 border border-slate-300 font-medium px-6 py-2.5 rounded-lg text-sm transition flex items-center justify-center space-x-2 shadow-sm cursor-pointer">
+                <i class="fa-solid fa-rotate-left"></i>
+                <span>Reset Form</span>
+            </button>
+        </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-white border-t border-slate-200 py-4 text-center text-xs text-slate-500 mt-12">
+        &#169; 2026 Kalkulator Pajak MBLB Bapenda Kota Padang • Dirancang oleh David Caesar, SH, MM
+    </footer>
+
+    <!-- JavaScript Logic -->
+    <script>
+        // Master Data Material MBLB dari Sheet Excel (Master Koefisien Konversi & Sheet Ton)
+        const masterMaterial = [
+            { nama: "Andesit", harga: 35000, koefisien: 2.7 },
+            { nama: "Basalt", harga: 15000, koefisien: 1.9 },
+            { nama: "Batu gamping", harga: 20000, koefisien: 1.3 },
+            { nama: "Batu sungai", harga: 30000, koefisien: 1.5 },
+            { nama: "Clay (industri)", harga: 15000, koefisien: 1.7 },
+            { nama: "Granit", harga: 15000, koefisien: 1.6 },
+            { nama: "Kerikil", harga: 30000, koefisien: 1.8 },
+            { nama: "Pasir", harga: 30000, koefisien: 1.4 },
+            { nama: "Pasir kuarsa", harga: 38000, koefisien: 1.2 },
+            { nama: "Tanah urug", harga: 18000, koefisien: 1.7 },
+            { nama: "Tanah liat", harga: 15000, koefisien: 1.7 }
+        ];
+
+        function initTable() {
+            const tbody = document.getElementById('materialTableBody');
+            let html = '';
+
+            masterMaterial.forEach((item, index) => {
+                html += `
+                    <tr class="hover:bg-slate-50 transition">
+                        <td class="py-3 px-4 text-center text-slate-500 font-medium">${index + 1}</td>
+                        <td class="py-3 px-4 font-semibold text-slate-800">${item.nama}</td>
+                        <td class="py-3 px-4 text-center">
+                            <div class="relative inline-block w-36">
+                                <input type="number" id="vol_${index}" min="0" step="any" placeholder="0" oninput="hitungPajak()" class="w-full bg-yellow-50 border border-yellow-300 rounded px-3 py-1.5 text-sm font-bold text-orange-900 text-center focus:outline-none focus:ring-2 focus:ring-orange-500 focus:bg-white transition">
+                            </div>
+                        </td>
+                        <td class="py-3 px-4 text-center font-bold text-orange-700" id="hasilTon_${index}">0.00 Ton</td>
+                        <td class="py-3 px-4 text-right font-semibold text-slate-700">Rp ${item.harga.toLocaleString('id-ID')}</td>
+                    </tr>
+                `;
+            });
+            tbody.innerHTML = html;
+        }
+
+        function getSelectedSatuan() {
+            const radios = document.getElementsByName('satuanGlobal');
+            for (let r of radios) {
+                if (r.checked) return r.value;
+            }
+            return 'Ton';
+        }
+
+        function updateSatuanGlobal() {
+            const satuan = getSelectedSatuan();
+            const badge = document.getElementById('satuanBadge');
+            const thLabel = document.getElementById('thSatuanLabel');
+
+            if (satuan === 'Kubik') {
+                badge.textContent = 'Mode Input: Volume (Meter Kubik / m³)';
+                thLabel.textContent = 'Input Volume (m³)';
+            } else {
+                badge.textContent = 'Mode Input: Berat (Ton)';
+                thLabel.textContent = 'Input Berat (Ton)';
+            }
+
+            hitungPajak();
+        }
+
+        function formatRupiah(angka) {
+            return 'Rp ' + Math.round(angka).toLocaleString('id-ID');
+        }
+
+        function hitungPajak() {
+            const namaWp = document.getElementById('namaWp').value || '-';
+            const masaBulan = document.getElementById('masaBulan').value;
+            const masaTahun = document.getElementById('masaTahun').value;
+            const satuanGlobal = getSelectedSatuan();
+
+            document.getElementById('resNamaWp').textContent = namaWp;
+            document.getElementById('resMasaPajak').textContent = `${masaBulan} ${masaTahun}`;
+
+            let totalBeratTon = 0;
+            let totalDpp = 0;
+
+            masterMaterial.forEach((item, index) => {
+                const inputVal = parseFloat(document.getElementById(`vol_${index}`).value) || 0;
+                
+                let beratTon = 0;
+                if (satuanGlobal === 'Kubik') {
+                    beratTon = inputVal * item.koefisien;
+                } else {
+                    beratTon = inputVal;
+                }
+
+                document.getElementById(`hasilTon_${index}`).textContent = beratTon.toLocaleString('id-ID', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' Ton';
+
+                const dppItem = beratTon * item.harga;
+                totalBeratTon += beratTon;
+                totalDpp += dppItem;
+            });
+
+            const pokokPajak = totalDpp * 0.20;
+            const opsenPajak = pokokPajak * 0.25;
+
+            // Logika Penentuan Keterlambatan & Bunga (1% Per Bulan)
+            const monthMap = {
+                "Januari": 0, "Februari": 1, "Maret": 2, "April": 3,
+                "Mei": 4, "Juni": 5, "Juli": 6, "Agustus": 7,
+                "September": 8, "Oktober": 9, "November": 10, "Desember": 11
+            };
+
+            const now = new Date();
+            const currentYear = now.getFullYear();
+            const currentMonth = now.getMonth();
+
+            const selYear = parseInt(masaTahun) || currentYear;
+            const selMonth = monthMap[masaBulan] !== undefined ? monthMap[masaBulan] : currentMonth;
+
+            // Hitung selisih bulan keterlambatan
+            const monthDiff = (currentYear - selYear) * 12 + (currentMonth - selMonth);
+            const isLate = monthDiff > 0;
+            const jumlahBulanTerlambat = isLate ? monthDiff : 0;
+            const persenBunga = jumlahBulanTerlambat * 0.01; // 1% per bulan
+
+            const bungaPajak = pokokPajak * persenBunga;
+            const bungaOpsen = opsenPajak * persenBunga;
+
+            const totalTerutang = pokokPajak + opsenPajak + bungaPajak + bungaOpsen;
+
+            // Update UI Status Badge & Nilai Bunga
+            const badgePajak = document.getElementById('badgeBungaPajak');
+            const badgeOpsen = document.getElementById('badgeBungaOpsen');
+
+            if (isLate) {
+                const labelTerlambat = `${jumlahBulanTerlambat}% (${jumlahBulanTerlambat} Bln Terlambat)`;
+                badgePajak.className = "text-[10px] bg-red-100 text-red-700 font-bold px-2 py-0.5 rounded-full";
+                badgePajak.textContent = labelTerlambat;
+                badgeOpsen.className = "text-[10px] bg-red-100 text-red-700 font-bold px-2 py-0.5 rounded-full";
+                badgeOpsen.textContent = labelTerlambat;
+            } else {
+                badgePajak.className = "text-[10px] bg-emerald-100 text-emerald-700 font-bold px-2 py-0.5 rounded-full";
+                badgePajak.textContent = "0% (Tepat Waktu)";
+                badgeOpsen.className = "text-[10px] bg-emerald-100 text-emerald-700 font-bold px-2 py-0.5 rounded-full";
+                badgeOpsen.textContent = "0% (Tepat Waktu)";
+            }
+
+            document.getElementById('resTotalBerat').textContent = totalBeratTon.toLocaleString('id-ID', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' Ton';
+            document.getElementById('resTotalDpp').textContent = formatRupiah(totalDpp);
+            document.getElementById('resPokokPajak').textContent = formatRupiah(pokokPajak);
+            document.getElementById('resOpsenPajak').textContent = formatRupiah(opsenPajak);
+            document.getElementById('resBungaPajak').textContent = formatRupiah(bungaPajak);
+            document.getElementById('resBungaOpsen').textContent = formatRupiah(bungaOpsen);
+            document.getElementById('grandTotal').textContent = formatRupiah(totalTerutang);
+        }
+
+        function resetKalkulator() {
+            const now = new Date();
+            const months = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
+            document.getElementById('namaWp').value = '';
+            document.getElementById('masaBulan').value = months[now.getMonth()];
+            document.getElementById('masaTahun').value = now.getFullYear();
+            
+            const radios = document.getElementsByName('satuanGlobal');
+            radios[0].checked = true;
+            updateSatuanGlobal();
+
+            masterMaterial.forEach((item, index) => {
+                document.getElementById(`vol_${index}`).value = '';
+            });
+            hitungPajak();
+        }
+
+        window.onload = function() {
+            const now = new Date();
+            const months = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
+            document.getElementById('masaBulan').value = months[now.getMonth()];
+            document.getElementById('masaTahun').value = now.getFullYear();
+            initTable();
+            updateSatuanGlobal();
+        };
+    </script>
+</body>
+</html>
